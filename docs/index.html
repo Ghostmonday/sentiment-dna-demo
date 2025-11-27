@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SentimentDNA - The Genome of Price</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #0f0f1a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        .container { max-width: 800px; text-align: center; }
+        h1 {
+            font-size: 4rem;
+            background: linear-gradient(90deg, #00d4ff, #7b2ff7, #f72585);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .tagline {
+            font-size: 1.5rem;
+            color: #888;
+            margin-bottom: 30px;
+        }
+        .highlight {
+            background: linear-gradient(90deg, #00d4ff33, #7b2ff733);
+            border: 1px solid #00d4ff44;
+            border-radius: 12px;
+            padding: 20px 30px;
+            margin: 30px 0;
+            font-size: 1.2rem;
+        }
+        .highlight strong { color: #00d4ff; }
+        .cta {
+            display: inline-block;
+            background: linear-gradient(90deg, #00d4ff, #7b2ff7);
+            color: #fff;
+            padding: 15px 40px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-top: 30px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+        }
+        code {
+            background: #1a1a2e;
+            border: 1px solid #333;
+            padding: 15px 25px;
+            border-radius: 8px;
+            display: block;
+            margin: 20px auto;
+            font-family: 'Fira Code', monospace;
+            color: #00d4ff;
+            max-width: 600px;
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 40px 0;
+        }
+        .stat { text-align: center; }
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #00d4ff;
+        }
+        .stat-label { color: #888; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SentimentDNA 🧬</h1>
+        <p class="tagline">The genome of price.</p>
+        
+        <div class="highlight">
+            <strong>Called SOL's 22% pump 4 hours early.</strong><br>
+            Beats Santiment by 22% on breakout signals.
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value">&lt;500ms</div>
+                <div class="stat-label">Latency</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">+22%</div>
+                <div class="stat-label">vs Santiment</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">Real-time</div>
+                <div class="stat-label">Streaming</div>
+            </div>
+        </div>
+
+        <code>curl https://api.sentimentdna.com/v1/sentiment/BTC | jq</code>
+
+        <a href="https://github.com/Ghostmonday/sentiment-dna-demo" class="cta">Get Started →</a>
+    </div>
+</body>
+</html>
+
