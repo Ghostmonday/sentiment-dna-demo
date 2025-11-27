@@ -4,112 +4,375 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SentimentDNA - The Genome of Price</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #0f0f1a 100%);
-            color: #e0e0e0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 20px;
-        }
-        .container { max-width: 800px; text-align: center; }
-        h1 {
-            font-size: 4rem;
-            background: linear-gradient(90deg, #00d4ff, #7b2ff7, #f72585);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-        }
-        .tagline {
-            font-size: 1.5rem;
-            color: #888;
-            margin-bottom: 30px;
-        }
-        .highlight {
-            background: linear-gradient(90deg, #00d4ff33, #7b2ff733);
-            border: 1px solid #00d4ff44;
-            border-radius: 12px;
-            padding: 20px 30px;
-            margin: 30px 0;
-            font-size: 1.2rem;
-        }
-        .highlight strong { color: #00d4ff; }
-        .cta {
-            display: inline-block;
-            background: linear-gradient(90deg, #00d4ff, #7b2ff7);
-            color: #fff;
-            padding: 15px 40px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 1.1rem;
-            margin-top: 30px;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .cta:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
-        }
-        code {
-            background: #1a1a2e;
-            border: 1px solid #333;
-            padding: 15px 25px;
-            border-radius: 8px;
-            display: block;
-            margin: 20px auto;
-            font-family: 'Fira Code', monospace;
-            color: #00d4ff;
-            max-width: 600px;
-        }
-        .stats {
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-            margin: 40px 0;
-        }
-        .stat { text-align: center; }
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #00d4ff;
-        }
-        .stat-label { color: #888; font-size: 0.9rem; }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>SentimentDNA 🧬</h1>
-        <p class="tagline">The genome of price.</p>
-        
-        <div class="highlight">
-            <strong>Called SOL's 22% pump 4 hours early.</strong><br>
-            Beats Santiment by 22% on breakout signals.
+    <!-- Animated Background -->
+    <canvas id="stars"></canvas>
+    
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🧬</span>
+                <span class="logo-text">SentimentDNA</span>
+            </a>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#demo">Live Demo</a>
+                <a href="login.html" class="btn-ghost">Login</a>
+                <a href="signup.html" class="btn-primary">Get Started</a>
+            </div>
+            <button class="mobile-menu" id="mobileMenu">☰</button>
         </div>
+    </nav>
 
-        <div class="stats">
-            <div class="stat">
-                <div class="stat-value">&lt;500ms</div>
-                <div class="stat-label">Latency</div>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="badge">🚀 Called SOL's 22% pump 4 hours early</div>
+            <h1 class="hero-title">
+                <span class="gradient-text">The Genome</span>
+                <br>of Price
+            </h1>
+            <p class="hero-subtitle">
+                Real-time sentiment oracle for crypto traders. Fuses Twitter, Reddit, 
+                on-chain flows & order books into one actionable signal.
+            </p>
+            <div class="hero-cta">
+                <a href="signup.html" class="btn-primary btn-large">
+                    Start Free Trial
+                    <span class="btn-arrow">→</span>
+                </a>
+                <a href="#demo" class="btn-ghost btn-large">
+                    <span class="play-icon">▶</span>
+                    Watch Demo
+                </a>
             </div>
-            <div class="stat">
-                <div class="stat-value">+22%</div>
-                <div class="stat-label">vs Santiment</div>
-            </div>
-            <div class="stat">
-                <div class="stat-value">Real-time</div>
-                <div class="stat-label">Streaming</div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-value">&lt;500ms</span>
+                    <span class="stat-label">Latency</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <span class="stat-value">+22%</span>
+                    <span class="stat-label">vs Santiment</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <span class="stat-value">24/7</span>
+                    <span class="stat-label">Real-time</span>
+                </div>
             </div>
         </div>
+        <div class="hero-visual">
+            <div class="terminal-window">
+                <div class="terminal-header">
+                    <span class="terminal-dot red"></span>
+                    <span class="terminal-dot yellow"></span>
+                    <span class="terminal-dot green"></span>
+                    <span class="terminal-title">sentiment-api</span>
+                </div>
+                <div class="terminal-body">
+                    <div class="terminal-line">
+                        <span class="prompt">$</span>
+                        <span class="command">curl api.sentimentdna.com/v1/BTC</span>
+                    </div>
+                    <div class="terminal-output" id="terminalOutput">
+                        <pre>{
+  <span class="json-key">"symbol"</span>: <span class="json-string">"BTC"</span>,
+  <span class="json-key">"score"</span>: <span class="json-number" id="liveScore">0.87</span>,
+  <span class="json-key">"confidence"</span>: <span class="json-number">0.92</span>,
+  <span class="json-key">"regime"</span>: <span class="json-string">"trending"</span>,
+  <span class="json-key">"drivers"</span>: [
+    <span class="json-string">"whale_buy: +1.8%"</span>,
+    <span class="json-string">"reddit_spike: +42%"</span>
+  ]
+}</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-        <code>curl https://api.sentimentdna.com/v1/sentiment/BTC | jq</code>
-
-        <a href="https://github.com/Ghostmonday/sentiment-dna-demo" class="cta">Get Started →</a>
+    <!-- Live Ticker -->
+    <div class="ticker-container">
+        <div class="ticker" id="ticker">
+            <div class="ticker-item bullish">BTC <span>+0.87</span> 🔥</div>
+            <div class="ticker-item bullish">ETH <span>+0.72</span> 📈</div>
+            <div class="ticker-item bearish">SOL <span>-0.23</span> 📉</div>
+            <div class="ticker-item bullish">DOGE <span>+0.91</span> 🚀</div>
+            <div class="ticker-item neutral">XRP <span>+0.12</span> ➡️</div>
+            <div class="ticker-item bullish">AVAX <span>+0.68</span> 📈</div>
+            <div class="ticker-item bearish">MATIC <span>-0.15</span> 📉</div>
+            <div class="ticker-item bullish">LINK <span>+0.54</span> 🔥</div>
+        </div>
     </div>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="section-header">
+            <h2>Why Traders Choose <span class="gradient-text">SentimentDNA</span></h2>
+            <p>Stop guessing. Start knowing.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Sub-Second Signals</h3>
+                <p>From tweet to trade signal in under 500ms. Beat the crowd before they even see the news.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🐋</div>
+                <h3>Whale Detection</h3>
+                <p>$500k+ moves hit your feed instantly. Know what smart money is doing before it moves the market.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🧠</div>
+                <h3>Signal Fusion</h3>
+                <p>Twitter + Reddit + On-chain + Order flow = One score. No noise, pure signal.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Explainable AI</h3>
+                <p>See exactly why the score moved. Attribution breakdown shows you the drivers.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Regime Detection</h3>
+                <p>Know if it's calm, trending, volatile, or liquidation mode. Adjust your strategy in real-time.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔌</div>
+                <h3>WebSocket Streams</h3>
+                <p>Push updates, not polling. Connect once, receive signals forever.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works">
+        <div class="section-header">
+            <h2>How It <span class="gradient-text">Works</span></h2>
+            <p>From chaos to clarity in milliseconds</p>
+        </div>
+        <div class="pipeline">
+            <div class="pipeline-step">
+                <div class="step-number">1</div>
+                <div class="step-icon">📡</div>
+                <h4>Ingest</h4>
+                <p>Twitter, Reddit, Ethereum, Binance</p>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="step-number">2</div>
+                <div class="step-icon">🧬</div>
+                <h4>Analyze</h4>
+                <p>NLP + Crypto Lexicon + Weights</p>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="step-number">3</div>
+                <div class="step-icon">⚗️</div>
+                <h4>Fuse</h4>
+                <p>Multi-signal weighted composite</p>
+            </div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-step">
+                <div class="step-number">4</div>
+                <div class="step-icon">🚀</div>
+                <h4>Deliver</h4>
+                <p>API, WebSocket, Alerts</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Proof -->
+    <section class="social-proof">
+        <div class="section-header">
+            <h2>Trusted by <span class="gradient-text">Traders</span></h2>
+        </div>
+        <div class="testimonials">
+            <div class="testimonial-card">
+                <div class="testimonial-quote">"Called the SOL pump 4h before CT noticed. This is the edge I was looking for."</div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">🐋</div>
+                    <div class="author-info">
+                        <span class="author-name">Anonymous Whale</span>
+                        <span class="author-title">8-figure portfolio</span>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-quote">"Finally, sentiment that actually correlates with price action. Beats Santiment by miles."</div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">📈</div>
+                    <div class="author-info">
+                        <span class="author-name">DeFi Degen</span>
+                        <span class="author-title">Full-time trader</span>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-quote">"The whale detection alone paid for a year's subscription in one trade."</div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">💎</div>
+                    <div class="author-info">
+                        <span class="author-name">Diamond Hands</span>
+                        <span class="author-title">Swing trader</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="section-header">
+            <h2>Simple <span class="gradient-text">Pricing</span></h2>
+            <p>Start free. Scale when you're ready.</p>
+        </div>
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <div class="pricing-tier">Free</div>
+                <div class="pricing-price">
+                    <span class="price-amount">$0</span>
+                    <span class="price-period">/month</span>
+                </div>
+                <ul class="pricing-features">
+                    <li>✓ 100 API calls/day</li>
+                    <li>✓ 5 symbols</li>
+                    <li>✓ 15-min delayed data</li>
+                    <li>✓ REST API only</li>
+                    <li class="disabled">✗ WebSocket streaming</li>
+                    <li class="disabled">✗ Whale alerts</li>
+                </ul>
+                <a href="signup.html" class="btn-ghost btn-full">Start Free</a>
+            </div>
+            <div class="pricing-card featured">
+                <div class="pricing-badge">MOST POPULAR</div>
+                <div class="pricing-tier">Gold</div>
+                <div class="pricing-price">
+                    <span class="price-amount">$49</span>
+                    <span class="price-period">/month</span>
+                </div>
+                <ul class="pricing-features">
+                    <li>✓ Unlimited API calls</li>
+                    <li>✓ All symbols</li>
+                    <li>✓ Real-time data</li>
+                    <li>✓ WebSocket streaming</li>
+                    <li>✓ Whale alerts</li>
+                    <li>✓ Email support</li>
+                </ul>
+                <a href="signup.html?plan=gold" class="btn-primary btn-full">Get Gold</a>
+            </div>
+            <div class="pricing-card">
+                <div class="pricing-tier">Whale</div>
+                <div class="pricing-price">
+                    <span class="price-amount">$199</span>
+                    <span class="price-period">/month</span>
+                </div>
+                <ul class="pricing-features">
+                    <li>✓ Everything in Gold</li>
+                    <li>✓ Priority latency</li>
+                    <li>✓ Custom alerts</li>
+                    <li>✓ API SLA (99.9%)</li>
+                    <li>✓ Dedicated support</li>
+                    <li>✓ Early access features</li>
+                </ul>
+                <a href="signup.html?plan=whale" class="btn-ghost btn-full">Contact Sales</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section class="demo-section" id="demo">
+        <div class="section-header">
+            <h2>See It <span class="gradient-text">Live</span></h2>
+            <p>Try the API right now. No signup required.</p>
+        </div>
+        <div class="demo-container">
+            <div class="demo-controls">
+                <select id="symbolSelect" class="demo-select">
+                    <option value="BTC">BTC - Bitcoin</option>
+                    <option value="ETH">ETH - Ethereum</option>
+                    <option value="SOL">SOL - Solana</option>
+                    <option value="DOGE">DOGE - Dogecoin</option>
+                </select>
+                <button id="fetchBtn" class="btn-primary">Fetch Sentiment</button>
+            </div>
+            <div class="demo-result">
+                <pre id="demoOutput">{
+  "symbol": "BTC",
+  "score": 0.87,
+  "score_pct": 93.5,
+  "confidence": 0.92,
+  "regime": "trending",
+  "attribution": {
+    "social": 0.35,
+    "onchain": 0.45,
+    "microstructure": 0.20
+  },
+  "momentum_short": 0.08,
+  "momentum_long": 0.15
+}</pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-content">
+            <h2>Ready to Trade with <span class="gradient-text">Edge</span>?</h2>
+            <p>Join traders who stopped guessing and started knowing.</p>
+            <div class="cta-buttons">
+                <a href="signup.html" class="btn-primary btn-large">
+                    Start Free Trial
+                    <span class="btn-arrow">→</span>
+                </a>
+            </div>
+            <p class="cta-note">No credit card required. 14-day free trial.</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <span class="logo-icon">🧬</span>
+                <span class="logo-text">SentimentDNA</span>
+                <p>The genome of price.</p>
+            </div>
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h4>Product</h4>
+                    <a href="#features">Features</a>
+                    <a href="#pricing">Pricing</a>
+                    <a href="#demo">Live Demo</a>
+                    <a href="docs.html">Documentation</a>
+                </div>
+                <div class="footer-column">
+                    <h4>Company</h4>
+                    <a href="#">About</a>
+                    <a href="#">Blog</a>
+                    <a href="#">Careers</a>
+                    <a href="#">Contact</a>
+                </div>
+                <div class="footer-column">
+                    <h4>Legal</h4>
+                    <a href="#">Privacy</a>
+                    <a href="#">Terms</a>
+                    <a href="#">Security</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2024 SentimentDNA. Built for traders who want signal, not noise.</p>
+        </div>
+    </footer>
+
+    <script src="landing.js"></script>
 </body>
 </html>
-

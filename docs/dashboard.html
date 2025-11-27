@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SentimentDNA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background: var(--darker-bg);
+        }
+
+        .alert-badge {
+            background: var(--neon-pink);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 0.5rem;
+        }
+
+        .sentiment-bar {
+            height: 8px;
+            background: var(--card-border);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .sentiment-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .sentiment-fill.bullish {
+            background: linear-gradient(90deg, var(--neon-green), var(--neon-cyan));
+        }
+
+        .sentiment-fill.bearish {
+            background: linear-gradient(90deg, var(--neon-pink), var(--neon-orange));
+        }
+
+        .sentiment-fill.neutral {
+            background: var(--text-muted);
+        }
+
+        .live-feed {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .feed-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid var(--card-border);
+            transition: background 0.3s;
+        }
+
+        .feed-item:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .feed-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .feed-icon.twitter { background: rgba(29, 161, 242, 0.2); }
+        .feed-icon.reddit { background: rgba(255, 69, 0, 0.2); }
+        .feed-icon.onchain { background: rgba(98, 126, 234, 0.2); }
+        .feed-icon.whale { background: rgba(0, 245, 255, 0.2); }
+
+        .feed-content {
+            flex: 1;
+        }
+
+        .feed-title {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .feed-meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .feed-score {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+        }
+
+        .feed-score.positive { color: var(--neon-green); }
+        .feed-score.negative { color: var(--neon-pink); }
+
+        .symbol-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .symbol-card:hover {
+            border-color: var(--neon-cyan);
+            transform: translateY(-2px);
+        }
+
+        .symbol-card.active {
+            border-color: var(--neon-cyan);
+            box-shadow: var(--glow-cyan);
+        }
+
+        .symbol-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .symbol-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .symbol-score {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .symbol-details {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .api-key-box {
+            background: var(--darker-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .api-key-box code {
+            flex: 1;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--neon-cyan);
+        }
+
+        .api-key-box button {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: 1px solid var(--card-border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .api-key-box button:hover {
+            border-color: var(--neon-cyan);
+            color: var(--neon-cyan);
+        }
+
+        .symbols-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 1200px) {
+            .symbols-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .symbols-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a href="index.html" class="sidebar-logo">
+                <span class="logo-icon">🧬</span>
+                <span>SentimentDNA</span>
+            </a>
+
+            <ul class="sidebar-nav">
+                <li>
+                    <a href="#" class="active">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <span class="nav-icon">📈</span>
+                        Sentiment
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <span class="nav-icon">🐋</span>
+                        Whale Alerts
+                        <span class="alert-badge">3</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <span class="nav-icon">🔔</span>
+                        Alerts
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <span class="nav-icon">🔌</span>
+                        API Keys
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <span class="nav-icon">📚</span>
+                        Docs
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <span class="nav-icon">⚙️</span>
+                        Settings
+                    </a>
+                </li>
+            </ul>
+
+            <div style="margin-top: auto; padding: 1rem;">
+                <div style="background: rgba(0, 245, 255, 0.1); border: 1px solid rgba(0, 245, 255, 0.3); border-radius: 12px; padding: 1rem;">
+                    <div style="font-weight: 600; margin-bottom: 0.5rem;">Gold Plan</div>
+                    <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Unlimited API calls</div>
+                    <a href="#" class="btn-ghost btn-full" style="font-size: 0.85rem;">Upgrade to Whale</a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="dashboard-header">
+                <h1>Dashboard</h1>
+                <div class="user-menu">
+                    <span style="color: var(--text-muted);">Welcome back</span>
+                    <div class="user-avatar">JD</div>
+                </div>
+            </div>
+
+            <!-- API Key -->
+            <div style="margin-bottom: 2rem;">
+                <h3 style="margin-bottom: 1rem; font-size: 1rem; color: var(--text-secondary);">Your API Key</h3>
+                <div class="api-key-box">
+                    <code id="apiKey">sdna_live_sk_****************************</code>
+                    <button onclick="copyApiKey()">Copy</button>
+                    <button onclick="toggleApiKey()">Show</button>
+                </div>
+            </div>
+
+            <!-- Symbol Cards -->
+            <div class="symbols-grid">
+                <div class="symbol-card active" data-symbol="BTC">
+                    <div class="symbol-header">
+                        <span class="symbol-name">BTC</span>
+                        <span class="symbol-score" style="color: var(--neon-green);">+0.87</span>
+                    </div>
+                    <div class="sentiment-bar">
+                        <div class="sentiment-fill bullish" style="width: 93%;"></div>
+                    </div>
+                    <div class="symbol-details">
+                        <span>🔥 trending</span>
+                        <span>92% conf</span>
+                    </div>
+                </div>
+                <div class="symbol-card" data-symbol="ETH">
+                    <div class="symbol-header">
+                        <span class="symbol-name">ETH</span>
+                        <span class="symbol-score" style="color: var(--neon-green);">+0.72</span>
+                    </div>
+                    <div class="sentiment-bar">
+                        <div class="sentiment-fill bullish" style="width: 86%;"></div>
+                    </div>
+                    <div class="symbol-details">
+                        <span>📈 trending</span>
+                        <span>88% conf</span>
+                    </div>
+                </div>
+                <div class="symbol-card" data-symbol="SOL">
+                    <div class="symbol-header">
+                        <span class="symbol-name">SOL</span>
+                        <span class="symbol-score" style="color: var(--neon-pink);">-0.23</span>
+                    </div>
+                    <div class="sentiment-bar">
+                        <div class="sentiment-fill bearish" style="width: 38%;"></div>
+                    </div>
+                    <div class="symbol-details">
+                        <span>⚡ volatile</span>
+                        <span>76% conf</span>
+                    </div>
+                </div>
+                <div class="symbol-card" data-symbol="DOGE">
+                    <div class="symbol-header">
+                        <span class="symbol-name">DOGE</span>
+                        <span class="symbol-score" style="color: var(--neon-green);">+0.91</span>
+                    </div>
+                    <div class="sentiment-bar">
+                        <div class="sentiment-fill bullish" style="width: 95%;"></div>
+                    </div>
+                    <div class="symbol-details">
+                        <span>🚀 volatile</span>
+                        <span>68% conf</span>
+                    </div>
+                </div>
+                <div class="symbol-card" data-symbol="XRP">
+                    <div class="symbol-header">
+                        <span class="symbol-name">XRP</span>
+                        <span class="symbol-score" style="color: var(--text-muted);">+0.12</span>
+                    </div>
+                    <div class="sentiment-bar">
+                        <div class="sentiment-fill neutral" style="width: 56%;"></div>
+                    </div>
+                    <div class="symbol-details">
+                        <span>😴 calm</span>
+                        <span>82% conf</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="dashboard-grid">
+                <div class="stat-card">
+                    <div class="stat-card-label">API Calls Today</div>
+                    <div class="stat-card-value">12,847</div>
+                    <div class="stat-card-change positive">↑ 23% from yesterday</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-label">Active Symbols</div>
+                    <div class="stat-card-value">10</div>
+                    <div class="stat-card-change positive">All monitored</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-label">Whale Alerts</div>
+                    <div class="stat-card-value">3</div>
+                    <div class="stat-card-change negative">↓ 2 from yesterday</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-label">Avg Latency</div>
+                    <div class="stat-card-value">47ms</div>
+                    <div class="stat-card-change positive">↓ 12ms improvement</div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+                <!-- Main Chart -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>BTC Sentiment History</h3>
+                        <div class="chart-controls">
+                            <button class="chart-btn">1H</button>
+                            <button class="chart-btn active">4H</button>
+                            <button class="chart-btn">1D</button>
+                            <button class="chart-btn">1W</button>
+                        </div>
+                    </div>
+                    <canvas id="sentimentChart" height="250"></canvas>
+                </div>
+
+                <!-- Attribution Chart -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>Signal Attribution</h3>
+                    </div>
+                    <canvas id="attributionChart" height="250"></canvas>
+                </div>
+            </div>
+
+            <!-- Live Feed -->
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3>Live Signal Feed</h3>
+                    <span style="color: var(--neon-green); font-size: 0.85rem;">● Live</span>
+                </div>
+                <div class="live-feed" id="liveFeed">
+                    <!-- Feed items will be inserted here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Sentiment Line Chart
+        const sentimentCtx = document.getElementById('sentimentChart').getContext('2d');
+        const sentimentGradient = sentimentCtx.createLinearGradient(0, 0, 0, 250);
+        sentimentGradient.addColorStop(0, 'rgba(0, 245, 255, 0.3)');
+        sentimentGradient.addColorStop(1, 'rgba(0, 245, 255, 0)');
+
+        new Chart(sentimentCtx, {
+            type: 'line',
+            data: {
+                labels: ['12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'],
+                datasets: [{
+                    label: 'Sentiment',
+                    data: [0.65, 0.72, 0.68, 0.75, 0.82, 0.78, 0.85, 0.91, 0.88, 0.92, 0.87, 0.87],
+                    borderColor: '#00f5ff',
+                    backgroundColor: sentimentGradient,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    pointHoverRadius: 6,
+                    pointHoverBackgroundColor: '#00f5ff',
+                    pointHoverBorderColor: '#fff',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        grid: { color: 'rgba(255,255,255,0.05)' },
+                        ticks: { color: 'rgba(255,255,255,0.4)' }
+                    },
+                    y: {
+                        min: 0,
+                        max: 1,
+                        grid: { color: 'rgba(255,255,255,0.05)' },
+                        ticks: { color: 'rgba(255,255,255,0.4)' }
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                }
+            }
+        });
+
+        // Attribution Doughnut Chart
+        const attrCtx = document.getElementById('attributionChart').getContext('2d');
+        new Chart(attrCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Social', 'On-Chain', 'Microstructure'],
+                datasets: [{
+                    data: [35, 45, 20],
+                    backgroundColor: ['#00f5ff', '#bf00ff', '#ff9500'],
+                    borderWidth: 0,
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { color: 'rgba(255,255,255,0.7)', padding: 20 }
+                    }
+                },
+                cutout: '70%'
+            }
+        });
+
+        // Live Feed
+        const feedItems = [
+            { type: 'whale', icon: '🐋', title: 'Whale Alert: 500 BTC moved to Binance', meta: '2 min ago', score: '-0.15' },
+            { type: 'twitter', icon: '🐦', title: '@CryptoWhale: "BTC looking strong here"', meta: '5 min ago', score: '+0.08' },
+            { type: 'reddit', icon: '🔴', title: 'r/bitcoin: "Bull run confirmed" trending', meta: '8 min ago', score: '+0.12' },
+            { type: 'onchain', icon: '⛓️', title: 'ETH: Large outflow from exchanges detected', meta: '12 min ago', score: '+0.22' },
+            { type: 'twitter', icon: '🐦', title: '@elonmusk mentioned DOGE', meta: '15 min ago', score: '+0.45' },
+            { type: 'whale', icon: '🐋', title: 'Whale Alert: 10,000 ETH transferred', meta: '18 min ago', score: '+0.18' },
+        ];
+
+        const feedContainer = document.getElementById('liveFeed');
+        feedItems.forEach(item => {
+            const scoreClass = parseFloat(item.score) >= 0 ? 'positive' : 'negative';
+            feedContainer.innerHTML += `
+                <div class="feed-item">
+                    <div class="feed-icon ${item.type}">${item.icon}</div>
+                    <div class="feed-content">
+                        <div class="feed-title">${item.title}</div>
+                        <div class="feed-meta">${item.meta}</div>
+                    </div>
+                    <div class="feed-score ${scoreClass}">${item.score}</div>
+                </div>
+            `;
+        });
+
+        // Symbol card selection
+        document.querySelectorAll('.symbol-card').forEach(card => {
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.symbol-card').forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+            });
+        });
+
+        // Chart button selection
+        document.querySelectorAll('.chart-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.chart-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+
+        // API Key functions
+        let keyVisible = false;
+        const fullKey = 'sdna_live_sk_7f8d9e2a1b3c4d5e6f7a8b9c0d1e2f3a';
+
+        function toggleApiKey() {
+            const keyEl = document.getElementById('apiKey');
+            keyVisible = !keyVisible;
+            keyEl.textContent = keyVisible ? fullKey : 'sdna_live_sk_****************************';
+        }
+
+        function copyApiKey() {
+            navigator.clipboard.writeText(fullKey);
+            alert('API key copied to clipboard!');
+        }
+
+        // Simulate live updates
+        setInterval(() => {
+            const cards = document.querySelectorAll('.symbol-card');
+            cards.forEach(card => {
+                const scoreEl = card.querySelector('.symbol-score');
+                const currentScore = parseFloat(scoreEl.textContent);
+                const change = (Math.random() - 0.5) * 0.05;
+                const newScore = Math.max(-1, Math.min(1, currentScore + change));
+                scoreEl.textContent = (newScore >= 0 ? '+' : '') + newScore.toFixed(2);
+                scoreEl.style.color = newScore >= 0.3 ? 'var(--neon-green)' : newScore <= -0.3 ? 'var(--neon-pink)' : 'var(--text-muted)';
+                
+                const bar = card.querySelector('.sentiment-fill');
+                bar.style.width = ((newScore + 1) / 2 * 100) + '%';
+            });
+        }, 3000);
+    </script>
+</body>
+</html>
+
